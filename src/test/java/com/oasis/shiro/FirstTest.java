@@ -3,11 +3,12 @@ package com.oasis.shiro;
 
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationToken;
+import org.apache.shiro.authc.IncorrectCredentialsException;
+import org.apache.shiro.authc.UnknownAccountException;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.config.IniSecurityManagerFactory;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.subject.Subject;
-import org.apache.shiro.util.Factory;
 import org.junit.jupiter.api.Test;
 
 public class FirstTest {
@@ -20,17 +21,16 @@ public class FirstTest {
         SecurityUtils.setSecurityManager(securityManager);
         // 3.获取Subject对象
         Subject subject = SecurityUtils.getSubject();
-        //4.获取Token令牌（由用户名，密码构成）
-        AuthenticationToken successToken = new UsernamePasswordToken("admin", "123456");
+        //4.生成Token令牌（由用户名，密码构成）
+        AuthenticationToken token = new UsernamePasswordToken("admin", "123456");
         //5.1 登录成功操作
-        subject.login(successToken);//success:true
+        try {
+            subject.login(token);//将token令牌与MyRealm取出的认证信息进行验证
+        }catch(UnknownAccountException uae){
+            System.out.println("账户错误");
+        }catch(IncorrectCredentialsException ice){
+            System.out.println("密码错误");}
         System.out.println("success:" + subject.isAuthenticated());
-        //5.2 用户名错误
-        AuthenticationToken userErrorToken = new UsernamePasswordToken("admin123", "123456");
-        subject.login(userErrorToken);//抛org.apache.shiro.authc.UnknownAccountException异常
-        //5.3 密码错误
-        AuthenticationToken pwdErrorToken = new UsernamePasswordToken("admin", "123");
-        subject.login(pwdErrorToken);//抛org.apache.shiro.authc.IncorrectCredentialsException异常
-        }
+    }
 
     }
