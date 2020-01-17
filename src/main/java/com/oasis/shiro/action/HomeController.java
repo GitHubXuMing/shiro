@@ -10,10 +10,15 @@ import java.util.Map;
 
 @Controller
 public class HomeController {
-    //已经在shiro filter中设置，必须登录成功后才能访问/index,否则都跳转到login
-    @RequestMapping({"/","/index"})
+    @RequestMapping({"/","/index"})//已经在shiro filter中设置，必须登录成功后才能访问/index,否则都跳转到login
     public String index(){
         return "/index";
+    }
+
+    @RequestMapping("/403")//如果没有权限，跳转到403.html页面
+    public String unauthorizedRole(){
+        System.out.println("------没有权限-------");
+        return "403";
     }
 
     @RequestMapping("/login")
@@ -43,11 +48,4 @@ public class HomeController {
         // 此方法不处理登录成功,由shiro进行处理
         return "/login";
     }
-
-    @RequestMapping("/403")
-    public String unauthorizedRole(){
-        System.out.println("------没有权限-------");
-        return "403";
-    }
-
 }
